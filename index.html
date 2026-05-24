@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phiếu Học Tập Tương Tác - Ôn Thi Tốt Nghiệp THPT 2026 - Môn Tin Học</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        examBlue: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        examYellow: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Lexend', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Tùy biến thanh cuộn mượt mà */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        /* Hiệu ứng mượt mà cho các tương tác */
+        .option-label {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .animated-drawer {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Vô hiệu hóa bôi đen khi nhấp đúp trên di động */
+        .no-select {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex flex-col overflow-x-hidden no-select">
+
+    <!-- TOP DECORATION BAR -->
+    <div class="h-1.5 w-full bg-gradient-to-r from-examBlue-700 via-examYellow-500 to-examBlue-900"></div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow flex items-center justify-center p-3 md:p-6 w-full max-w-7xl mx-auto">
+        
+        <!-- STEP 1: NHẬP THÔNG TIN HỌC SINH -->
+        <section id="login-section" class="w-full max-w-xl bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden transform transition-all duration-300 mx-auto">
+            <div class="bg-gradient-to-br from-examBlue-800 to-examBlue-900 p-6 md:p-8 text-center relative overflow-hidden">
+                <!-- Abstract BG patterns -->
+                <div class="absolute -right-12 -top-12 w-40 h-40 bg-examYellow-500/10 rounded-full blur-2xl"></div>
+                <div class="absolute -left-12 -bottom-12 w-40 h-40 bg-examBlue-600/20 rounded-full blur-2xl"></div>
+
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-examYellow-500/20 text-examYellow-400 text-2xl mb-3 border border-examYellow-500/30">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h1 class="text-white font-title font-bold text-xl md:text-2xl tracking-tight leading-snug">
+                    PHIẾU HỌC TẬP TƯƠNG TÁC TIN HỌC 2026
+                </h1>
+                <p class="text-examBlue-100 mt-1 text-xs md:text-sm font-medium">Lớp học thông minh — Học nhanh, nhớ lâu</p>
+                <div class="mt-3 inline-block bg-examYellow-500 text-examBlue-900 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                    Chế độ luyện tập có âm thanh & giải thích
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <p class="text-xs md:text-sm text-slate-500 text-center mb-6 leading-relaxed">
+                    Chào các em học sinh! Hãy nhập Họ tên và Lớp học để bắt đầu làm bài. Hệ thống sẽ chấm điểm và phản hồi kết quả và giải thích chi tiết kèm âm thanh ngay khi các em tương tác lựa chọn.
+                </p>
+                
+                <form id="auth-form" onsubmit="event.preventDefault(); startExam();">
+                    <div class="space-y-4">
+                        <!-- Input Name -->
+                        <div>
+                            <label for="student-name" class="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
+                                <i class="fa-solid fa-user text-examBlue-600 mr-1.5"></i> Họ và tên học sinh <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="student-name" required placeholder="Nhập đầy đủ họ và tên..."
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-examBlue-600 focus:border-examBlue-600 outline-none transition text-slate-800 font-medium placeholder:font-normal placeholder:text-slate-400 text-sm md:text-base"
+                                oninput="checkFormValidity()">
+                        </div>
+
+                        <!-- Input Class -->
+                        <div>
+                            <label for="student-class" class="block text-xs md:text-sm font-semibold text-slate-700 mb-1.5">
+                                <i class="fa-solid fa-school text-examBlue-600 mr-1.5"></i> Lớp học <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="student-class" required placeholder="Ví dụ: 12A1, 12A2..."
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-examBlue-600 focus:border-examBlue-600 outline-none transition text-slate-800 font-medium placeholder:font-normal placeholder:text-slate-400 text-sm md:text-base"
+                                oninput="checkFormValidity()">
+                        </div>
+                    </div>
+
+                    <!-- Submit Area -->
+                    <div class="mt-6">
+                        <button type="submit" id="btn-start" disabled
+                            class="w-full py-3.5 px-6 rounded-xl font-title font-bold text-sm md:text-base text-white bg-slate-300 cursor-not-allowed transition-all duration-300 shadow-md">
+                            BẮT ĐẦU LÀM BÀI <i class="fa-solid fa-circle-play ml-1.5"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="bg-slate-50 py-3.5 px-6 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                <span><i class="fa-solid fa-clock mr-1"></i> 50 phút</span>
+                <span><i class="fa-solid fa-circle-question mr-1"></i> 28 câu học tập</span>
+            </div>
+        </section>
+
+        <!-- STEP 2: KHU VỰC LÀM BÀI CHÍNH (HIDDEN INITIALLY) -->
+        <section id="exam-section" class="hidden w-full flex flex-col lg:flex-row gap-6 items-stretch animate-fade-in">
+            
+            <!-- COLUMN 1: KHU VỰC HIỂN THỊ CÂU HỎI TƯƠNG TÁC (Tối ưu chiều cao toàn màn hình trên điện thoại) -->
+            <div class="flex-grow flex flex-col bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden min-h-[480px] h-[calc(100vh-140px)] lg:h-[650px] max-h-[800px]">
+                
+                <!-- HEADER PHIẾU BÀI TẬP -->
+                <div class="bg-examBlue-900 p-4 md:px-6 flex flex-row justify-between items-center gap-2 border-b border-examBlue-800 shrink-0">
+                    <div class="flex items-center gap-2 md:gap-3">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-examYellow-500 flex items-center justify-center text-examBlue-900 font-bold shadow-md shrink-0">
+                            <i class="fa-solid fa-file-invoice text-sm md:text-base"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h2 class="text-white font-title font-bold text-xs md:text-base truncate leading-tight">MÔN: TIN HỌC 2026</h2>
+                            <p class="text-[10px] md:text-xs text-slate-300 truncate">SBD: <span id="display-name" class="text-examYellow-400 font-bold">...</span> | Lớp: <span id="display-class" class="text-examYellow-400 font-bold">...</span></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timer and Grid Button on Mobile -->
+                    <div class="flex items-center gap-2">
+                        <!-- Nút kích hoạt bảng câu hỏi trên điện thoại -->
+                        <button onclick="toggleMobileDrawer(true)" class="lg:hidden bg-examBlue-800 hover:bg-examBlue-700 text-white font-semibold p-2 rounded-lg text-xs flex items-center gap-1 border border-examBlue-700">
+                            <i class="fa-solid fa-list-ol"></i>
+                            <span>Bảng câu</span>
+                        </button>
+                        
+                        <div class="bg-examBlue-800/80 px-2.5 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl border border-examBlue-700 flex items-center gap-1 md:gap-2 shrink-0">
+                            <i class="fa-solid fa-clock text-examYellow-400 text-xs md:text-sm animate-pulse"></i>
+                            <span id="timer" class="text-white font-mono font-bold text-sm md:text-base">50:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROGRESS BAR -->
+                <div class="w-full bg-slate-100 h-1 shrink-0 relative">
+                    <div id="progress-bar" class="bg-examYellow-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- MAIN WORKSPACE FOR QUESTION -->
+                <div class="p-4 md:p-6 flex-grow flex flex-col justify-between overflow-hidden">
+                    
+                    <!-- Nội dung câu hỏi có tính năng cuộn độc lập -->
+                    <div id="question-container" class="question-card flex-grow overflow-y-auto pr-1">
+                        <!-- Dynamic Question HTML will be rendered here -->
+                    </div>
+
+                    <!-- THÔNG BÁO BẮT BUỘC TRẢ LỜI CÂU HỎI TRƯỚC KHI TIẾP TỤC -->
+                    <div id="navigation-warning" class="hidden text-red-500 font-bold text-center text-xs md:text-sm animate-pulse my-2 bg-red-50 p-3 rounded-xl border border-red-200 shrink-0">
+                        <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Vui lòng hoàn thành câu trả lời hiện tại trước khi chuyển câu mới!
+                    </div>
+
+                    <!-- FOOTER NAVIGATION - Đóng ghim cố định ở đáy hộp -->
+                    <div class="flex items-center justify-between pt-3 mt-2 border-t border-slate-100 gap-3 shrink-0">
+                        <button id="btn-prev" onclick="navigateQuestion(-1)" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold text-xs md:text-sm transition disabled:opacity-30 disabled:pointer-events-none active:scale-95">
+                            <i class="fa-solid fa-chevron-left"></i> TRƯỚC
+                        </button>
+                        <span id="question-indicator" class="hidden sm:inline-block text-slate-400 font-bold font-title text-xs md:text-sm uppercase tracking-wider">CÂU 1 / 28</span>
+                        <button id="btn-next" onclick="navigateQuestion(1)" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl bg-examBlue-600 hover:bg-examBlue-700 text-white font-bold text-xs md:text-sm transition active:scale-95">
+                            TIẾP THEO <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 2: BẢNG ĐIỀU HƯỚNG CÂU HỎI -->
+            <!-- Lớp mờ che màn hình trên Mobile khi mở ngăn kéo -->
+            <div id="drawer-backdrop" onclick="toggleMobileDrawer(false)" class="hidden fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm"></div>
+            
+            <div id="navigation-sidebar" class="fixed lg:static right-0 top-0 h-full lg:h-auto w-80 lg:w-80 bg-white lg:bg-transparent z-50 lg:z-auto shadow-2xl lg:shadow-none p-5 lg:p-0 flex flex-col gap-5 transform translate-x-full lg:translate-x-0 animated-drawer lg:shrink-0">
+                
+                <!-- TIÊU ĐỀ NGĂN KÉO TRÊN MOBILE -->
+                <div class="flex lg:hidden justify-between items-center pb-4 border-b border-slate-100">
+                    <h3 class="font-title font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-examBlue-600"></i> BẢNG ĐIỀU HƯỚNG CÂU HỎI
+                    </h3>
+                    <button onclick="toggleMobileDrawer(false)" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center active:scale-90">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- PANEL CHỈ SỐ CHÍNH -->
+                <div class="bg-white lg:p-5 lg:rounded-2xl lg:shadow-md lg:border lg:border-slate-100 overflow-y-auto flex-grow lg:flex-grow-0">
+                    
+                    <!-- Phần I MCQ Grid -->
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-2.5">
+                            <span class="text-[10px] md:text-xs font-bold text-slate-400 tracking-wider uppercase">PHẦN I: Trắc nghiệm (1-24)</span>
+                            <span id="mcq-count" class="text-[10px] font-bold text-examBlue-600 bg-examBlue-50 px-2 py-0.5 rounded-full">0/24</span>
+                        </div>
+                        <div class="grid grid-cols-6 gap-1.5" id="grid-mcq">
+                            <!-- JS will generate 24 indicator circles -->
+                        </div>
+                    </div>
+
+                    <!-- Phần II T/F Section -->
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-2.5">
+                            <span class="text-[10px] md:text-xs font-bold text-slate-400 tracking-wider uppercase">PHẦN II: Đúng / Sai (C1, 2, 5, 6)</span>
+                            <span id="tf-count" class="text-[10px] font-bold text-examBlue-600 bg-examBlue-50 px-2 py-0.5 rounded-full">0/4</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-1.5" id="grid-tf">
+                            <!-- JS will generate 4 indicator groups for T/F -->
+                        </div>
+                    </div>
+
+                    <!-- Chú thích ký hiệu màu sắc -->
+                    <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-[10px] text-slate-500 font-medium">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3.5 h-3.5 rounded bg-slate-100 border border-slate-300 inline-block"></span>
+                            <span>Chưa làm</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3.5 h-3.5 rounded bg-examBlue-600 inline-block"></span>
+                            <span>Đã hoàn thành</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 col-span-2">
+                            <span class="w-3.5 h-3.5 rounded border-2 border-examYellow-500 bg-white inline-block"></span>
+                            <span>Câu đang làm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL HƯỚNG DẪN THI -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-5 rounded-xl shadow-md text-white hidden lg:block">
+                    <h4 class="font-title font-bold text-examYellow-400 text-xs mb-1.5 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info"></i> Luyện tập thông minh
+                    </h4>
+                    <ul class="space-y-1 text-[11px] text-slate-300 list-disc list-inside">
+                        <li>Chọn phương án để xem đáp án tức thì.</li>
+                        <li>Được hỗ trợ âm thanh báo hiệu sinh động.</li>
+                        <li>Học kỹ giải thích để làm chủ kiến thức 2026.</li>
+                        <li>Bấm Nộp bài khi hoàn thiện để lưu điểm số.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 3: BẢNG KẾT QUẢ / BÁO CÁO SAU THI -->
+        <section id="result-section" class="hidden w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-500 mx-auto">
+            <div class="bg-gradient-to-br from-examBlue-800 to-examBlue-900 p-6 md:p-8 text-center text-white relative">
+                <div class="absolute -right-20 -top-20 w-60 h-60 bg-examYellow-500/10 rounded-full blur-3xl"></div>
+                <div class="absolute -left-20 -bottom-20 w-60 h-60 bg-examBlue-600/20 rounded-full blur-3xl"></div>
+                
+                <div class="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-examYellow-500 text-examBlue-900 text-3xl md:text-4xl mb-3 border-4 border-white shadow-lg animate-bounce">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h1 class="font-title font-extrabold text-2xl md:text-3xl">KẾT QUẢ THI THỬ</h1>
+                <p class="text-examBlue-200 mt-1 text-xs md:text-sm font-medium">Chúc mừng em đã hoàn thành phiếu học tập ôn luyện!</p>
+            </div>
+
+            <div class="p-4 md:p-8">
+                <!-- Thẻ điểm -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-50 p-4 md:p-6 rounded-2xl border border-slate-100 text-center">
+                        <span class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Thí sinh</span>
+                        <h4 id="res-name" class="font-title font-bold text-slate-800 text-sm md:text-base">...</h4>
+                        <p id="res-class" class="text-xs text-slate-500 font-medium">Lớp: ...</p>
+                    </div>
+                    
+                    <div class="bg-examBlue-50 p-4 md:p-6 rounded-2xl border border-slate-100 text-center relative overflow-hidden">
+                        <span class="text-[10px] md:text-xs font-bold text-examBlue-600 uppercase tracking-wider block mb-1">Điểm số đạt được</span>
+                        <div class="text-3xl md:text-4xl font-title font-black text-examBlue-800" id="res-score">0.0 / 10</div>
+                        <p class="text-[10px] text-examBlue-600 mt-1 font-semibold" id="res-percent">Đúng 0% số câu</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 md:p-6 rounded-2xl border border-slate-100 text-center">
+                        <span class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Thời gian làm bài</span>
+                        <h4 id="res-time" class="font-title font-bold text-slate-800 text-sm md:text-base">...</h4>
+                        <p class="text-xs text-slate-500 font-medium">Tính từ lúc bắt đầu</p>
+                    </div>
+                </div>
+
+                <!-- Thống kê phân tích câu trả lời chuẩn xác -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 mb-6">
+                    <h3 class="font-title font-bold text-slate-800 mb-3 flex items-center gap-2 text-xs md:text-sm">
+                        <i class="fa-solid fa-chart-pie text-examBlue-600"></i> BÁO CÁO KẾT QUẢ THEO PHẦN
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                        <div class="p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                            <div>
+                                <span class="text-xs md:text-sm font-bold text-slate-700 block">Phần I (MCQ 1 lựa chọn)</span>
+                                <span class="text-[10px] text-slate-500">Mỗi câu đúng đạt 0.25 điểm (Tối đa 6.0 điểm)</span>
+                            </div>
+                            <span id="stat-part1" class="text-sm md:text-base font-bold text-examBlue-700">0 / 24 câu đúng</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                            <div>
+                                <span class="text-xs md:text-sm font-bold text-slate-700 block">Phần II (Đúng / Sai)</span>
+                                <span class="text-[10px] text-slate-500">Đúng lũy tiến 1 ý: 0.1đ | 2 ý: 0.25đ | 3 ý: 0.5đ | 4 ý: 1.0đ</span>
+                            </div>
+                            <span id="stat-part2" class="text-sm md:text-base font-bold text-examBlue-700">0.0 / 4.0 điểm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Khối Làm lại bài -->
+                <div class="text-center space-y-3">
+                    <p class="text-xs md:text-sm text-slate-500">Em muốn thử sức lại một lần nữa với đề xáo trộn ngẫu nhiên?</p>
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <button onclick="restartExam()" class="bg-examBlue-600 hover:bg-examBlue-700 active:scale-95 text-white font-bold px-8 py-3.5 rounded-xl text-xs md:text-sm transition shadow-md flex items-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate animate-spin-slow"></i> LÀM LẠI BÀI
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CONFIRM SUBMISSION MODAL -->
+    <div id="confirm-modal" class="hidden fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-sm w-full p-5 text-center transform transition-all">
+            <div class="w-14 h-14 rounded-full bg-red-100 text-red-600 text-2xl flex items-center justify-center mx-auto mb-3 border border-red-200 animate-bounce">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="font-title font-bold text-slate-900 text-lg mb-1.5">XÁC NHẬN NỘP BÀI</h3>
+            <p class="text-xs text-slate-500 mb-5 leading-relaxed" id="confirm-modal-msg">Em đã chắc chắn muốn kết thúc bài làm tại đây? Toàn bộ kết quả bài ôn luyện sẽ được hệ thống tính toán điểm số.</p>
+            <div class="flex gap-2 justify-center">
+                <button onclick="closeConfirmModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">
+                    ĐỂ SAU
+                </button>
+                <button onclick="forceSubmit()" class="w-full py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-xs transition shadow-md">
+                    NỘP BÀI
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT CHẤM ĐIỂM VÀ PHẢN HỒI ĐÁP ÁN -->
+    <script>
+        // WEB AUDIO API - CHUẨN TỔNG HỢP ÂM THANH SÓNG TRỰC TIẾP
+        function playCorrectSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Nốt thứ nhất
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                gain1.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start();
+                osc1.stop(ctx.currentTime + 0.2);
+
+                // Nốt thứ hai (phát hơi trễ một chút tạo hợp âm tươi sáng)
+                setTimeout(() => {
+                    const osc2 = ctx.createOscillator();
+                    const gain2 = ctx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(659.25, ctx.currentTime); // E5
+                    gain2.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.start();
+                    osc2.stop(ctx.currentTime + 0.35);
+                }, 80);
+            } catch (e) {
+                console.log("AudioContext blocked or not supported:", e);
+            }
+        }
+
+        function playIncorrectSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(140, ctx.currentTime); // Tần số trầm đục
+                osc.frequency.linearRampToValueAtTime(90, ctx.currentTime + 0.35);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.35);
+            } catch (e) {
+                console.log("AudioContext blocked or not supported:", e);
+            }
+        }
+
+        // ĐỊNH NGHĨA TOÀN BỘ NGÂN HÀNG CÂU HỎI GỐC (ĐỂ SAO CHÉP VÀ XÁO TRỘN)
+        const ORIGINAL_QUESTIONS = [
+            // PHẦN I: 24 CÂU TRẮC NGHIỆM ĐƠN CHỌN
+            {
+                id: 1,
+                type: "MCQ",
+                text: "Phương án nào sau đây nêu đúng về Trí tuệ nhân tạo (AI)?",
+                options: [
+                    "Một ngành khoa học và công nghệ nhằm chế tạo ra các máy móc thông minh, đặc biệt là các chương trình máy tính thông minh.",
+                    "Phần mềm giúp máy tính có khả năng thực hiện những hành vi thông minh giống con người.",
+                    "Khả năng của máy tính thực hiện các nhiệm vụ thường yêu cầu trí thông minh của con người.",
+                    "Thuật toán giúp máy tính có khả năng tự học hỏi từ các dữ liệu thu thập được."
+                ],
+                correct: 0,
+                explain: "Trí tuệ nhân tạo (AI) được định nghĩa chuẩn xác nhất trong SGK là ngành khoa học và công nghệ chế tạo máy móc thông minh, đặc biệt là các chương trình máy tính thông minh."
+            },
+            {
+                id: 2,
+                type: "MCQ",
+                text: "Thách thức lớn nhất trong việc phát triển trí tuệ nhân tạo mạnh (AGI) là gì?",
+                options: [
+                    "Khả năng mô phỏng và tái tạo hoàn chỉnh ý thức, tư duy tự nhận thức của con người.",
+                    "Sự thiếu hụt dữ liệu chất lượng cao phục vụ đào tạo mô hình.",
+                    "Giới hạn về năng lực xử lý phần cứng của các siêu máy tính hiện tại.",
+                    "Vấn đề chi phí đầu tư ban đầu quá lớn cho các trung tâm nghiên cứu."
+                ],
+                correct: 0,
+                explain: "AI mạnh (AGI) đặt mục tiêu đạt được nhận thức ngang tầm con người, thách thức cốt lõi là việc định hình và mô phỏng được ý thức tự nhận thức của con người."
+            },
+            {
+                id: 3,
+                type: "MCQ",
+                text: "Phương án nào sau đây KHÔNG phải là ứng dụng của AI trong sản xuất?",
+                options: [
+                    "Điều phối và thiết lập kế hoạch điều trị y khoa lâm sàng tối ưu.",
+                    "Dự báo nhu cầu thị trường và tối ưu hóa lượng hàng tồn kho.",
+                    "Tự động kiểm tra phát hiện lỗi sản phẩm thông qua hệ thống thị giác máy tính.",
+                    "Điều khiển rô-bốt thực hiện chính xác các quy trình lắp ráp cơ khí phức tạp."
+                ],
+                correct: 0,
+                explain: "Điều phối điều trị y khoa lâm sàng là ứng dụng của AI trong lĩnh vực Y tế, không thuộc hoạt động Sản xuất công nghiệp trực tiếp."
+            },
+            {
+                id: 4,
+                type: "MCQ",
+                text: "Trong một mạng LAN, thiết bị nào có chức năng chính là quản lý và cấp phát địa chỉ IP tự động cho các thiết bị kết nối vào mạng?",
+                options: [
+                    "Modem.",
+                    "Hub.",
+                    "Switch.",
+                    "Router."
+                ],
+                correct: 3,
+                explain: "Router (Bộ định tuyến) thường tích hợp dịch vụ DHCP server để tự động cấp phát địa chỉ IP cho các thiết bị trong mạng LAN."
+            },
+            {
+                id: 5,
+                type: "MCQ",
+                text: "Trong các thiết bị sau đây, thiết bị nào đóng vai trò là thiết bị đầu cuối trong mạng máy tính?",
+                options: [
+                    "Bộ định tuyến (Router).",
+                    "Máy in kết nối không dây (Wi-Fi).",
+                    "Bộ chuyển mạch (Switch).",
+                    "Điểm truy cập không dây (Access Point)."
+                ],
+                correct: 1,
+                explain: "Trong mạng máy tính, thiết bị đầu cuối (như máy tính, điện thoại, máy in) là nơi gửi hoặc nhận dữ liệu. Các thiết bị mạng kết nối trung gian như Router, Switch và Access Point chỉ đóng vai trò làm nhiệm vụ trung chuyển và truyền dẫn tín hiệu dữ liệu."
+            },
+            {
+                id: 6,
+                type: "MCQ",
+                text: "Vai trò của giao thức IP so với giao thức TCP trong bộ giao thức truyền thông TCP/IP là gì?",
+                options: [
+                    "Giao thức IP chịu trách nhiệm thiết lập kết nối, giao thức TCP định tuyến dữ liệu.",
+                    "Giao thức IP đảm bảo dữ liệu truyền đúng thứ tự, giao thức TCP cung cấp cơ chế địa chỉ.",
+                    "Giao thức IP định tuyến gói tin dựa trên địa chỉ logic, giao thức TCP kiểm soát lỗi và đảm bảo truyền dữ liệu tin cậy.",
+                    "Giao thức IP dùng để truyền tải các trang siêu văn bản, giao thức TCP dùng để vận chuyển thư điện tử."
+                ],
+                correct: 2,
+                explain: "Giao thức IP xử lý việc định tuyến phân phối gói tin qua địa chỉ IP, còn TCP hoạt động ở tầng vận chuyển giúp kiểm soát luồng và bảo đảm độ tin cậy."
+            },
+            {
+                id: 7,
+                type: "MCQ",
+                text: "Thiết bị máy quét (scanner) được kết nối trực tiếp với máy tính SCAN-01. Để chia sẻ máy quét này cho các máy tính khác trong mạng LAN sử dụng, quy trình thực hiện nào sau đây là đúng?",
+                options: [
+                    "Bật tính năng chia sẻ máy quét trên máy SCAN-01 -> Kết nối vật lý máy quét với máy SCAN-01 -> Khai báo kết nối từ các máy tính khác đến máy quét đã chia sẻ.",
+                    "Kết nối vật lý máy quét với máy SCAN-01 -> Bật tính năng chia sẻ máy quét trên máy SCAN-01 -> Khai báo kết nối từ các máy tính khác đến máy quét đã chia sẻ.",
+                    "Khai báo kết nối từ các máy tính khác đến máy quét -> Kết nối vật lý máy quét với máy SCAN-01 -> Bật tính năng chia sẻ máy quét trên máy SCAN-01.",
+                    "Kết nối vật lý máy quét với máy SCAN-01 -> Khai báo kết nối từ các máy tính khác đến máy quét -> Bật tính năng chia sẻ máy quét trên máy SCAN-01."
+                ],
+                correct: 1,
+                explain: "Quy trình chuẩn để chia sẻ một thiết bị ngoại vi dùng chung trong hệ thống mạng LAN: Bước 1: Kết nối thiết bị vật lý vào máy tính điều khiển (máy chủ dịch vụ) -> Bước 2: Bật tính năng cho phép chia sẻ thiết bị (Sharing) từ hệ điều hành của máy điều khiển -> Bước 3: Trên các máy trạm khác thực hiện dò tìm địa chỉ IP hoặc tên của máy chủ điều khiển để thiết lập kết nối gián tiếp."
+            },
+            {
+                id: 8,
+                type: "MCQ",
+                text: "Một phòng hành chính gồm 5 máy tính để bàn muốn xây dựng mạng LAN có dây cục bộ phục vụ việc chia sẻ dữ liệu nội bộ và kết nối Internet ổn định với mức chi phí tối ưu nhất. Thiết bị tối thiểu cần được trang bị là gì?",
+                options: [
+                    "Một bộ định tuyến (Router) có tích hợp từ 4-8 cổng LAN Switch.",
+                    "Một bộ chuyển mạch Switch độc lập và một hệ thống máy chủ cơ sở dữ liệu chuyên dụng.",
+                    "Một bộ lặp tín hiệu (Repeater) cùng giải pháp lưu trữ ổ đĩa mạng NAS.",
+                    "Một bộ thu phát Wi-Fi (Access Point) và một máy in có cổng mạng RJ45."
+                ],
+                correct: 0,
+                explain: "Chi phí tối ưu nhất cho văn phòng nhỏ là một thiết bị đa năng - Router tích hợp sẵn các cổng LAN vật lý (Switch 4-8 cổng) để cấp mạng LAN có dây lẫn ra mạng ngoài."
+            },
+            {
+                id: 9,
+                type: "MCQ",
+                text: "Phương án nào sau đây KHÔNG phải là ưu điểm của phương thức giao tiếp và trao đổi thông tin trực tuyến qua mạng máy tính?",
+                options: [
+                    "Tiết kiệm tối đa thời gian di chuyển và không giới hạn bởi không gian địa lý vật lý.",
+                    "Cho phép dễ dàng lưu trữ, lưu vết lịch sử tương tác để kiểm tra lại khi cần thiết.",
+                    "Hỗ trợ người tham gia nắm bắt toàn diện, chính xác cảm xúc, thái độ người giao tiếp qua ngôn ngữ cơ thể trực tiếp.",
+                    "Khả năng truyền dẫn đồng thời lượng thông tin phong phú với nhiều định dạng đa phương tiện phức tạp."
+                ],
+                correct: 2,
+                explain: "Giao tiếp trực tuyến thường hạn chế khả năng cảm nhận trực quan trực tiếp về ngôn ngữ cơ thể, sắc thái biểu cảm sâu sắc so với gặp mặt trực diện trực tiếp."
+            },
+            {
+                id: 10,
+                type: "MCQ",
+                text: "Hành vi nào thể hiện rõ ràng nét ứng xử có văn hóa và nhân văn sâu sắc trên không gian mạng xã hội hiện nay?",
+                options: [
+                    "Sử dụng nhiều tài khoản giả danh để tạo các luồng dư luận châm chọc đối thủ.",
+                    "Tích cực tham gia 'thả cảm xúc' đồng thuận nhằm lan truyền các cuộc tranh luận mỉa mai, nói xấu người khác.",
+                    "Tuyệt đối tôn trọng quyền cá nhân, cam kết không tiếp tay, đồng tình hay phát tán các nội dung bắt nạt, lăng mạ người khác.",
+                    "Sử dụng chiêu trò hứa thưởng, tặng quà có giá trị nhằm thu hút lượng tương tác bán hàng trực tuyến cá nhân."
+                ],
+                correct: 2,
+                explain: "Không tham gia vào việc bắt nạt mạng, lăng mạ người khác và tôn trọng quyền riêng tư là biểu hiện chuẩn mực của hành vi nhân văn."
+            },
+            {
+                id: 11,
+                type: "MCQ",
+                text: "Khi vô tình phát hiện một bài đăng có thông tin sai sự thật hoặc mang mục đích bôi nhọ trên mạng xã hội lớn, đâu là cách ứng xử văn minh và tuân thủ pháp luật của học sinh?",
+                options: [
+                    "Lập tức ấn chia sẻ (Share) bài viết về dòng thời gian của mình để bạn bè thấy và đề phòng.",
+                    "Viết bình luận ác ý tương ứng nhằm bảo vệ nạn nhân ngay tại bài đăng đó.",
+                    "Sử dụng công cụ Báo cáo (Report) tích hợp sẵn của nền tảng để gắn cờ vi phạm nội dung sai lệch.",
+                    "Thực hiện thả tương tác Like hoặc Haha nhằm đẩy độ chú ý để cơ quan quản lý dễ xử phạt."
+                ],
+                correct: 2,
+                explain: "Báo cáo nội dung vi phạm (Report) là hành động thiết thực nhất giúp loại bỏ thông tin sai trái khỏi nền tảng số."
+            },
+            {
+                id: 12,
+                type: "MCQ",
+                text: "Theo Luật Công nghệ thông tin, loại hình dịch vụ công nghệ thông tin nào sau đây bao gồm việc bảo trì và bảo đảm an toàn mạng?",
+                options: [
+                    "Dịch vụ quản lý ứng dụng.",
+                    "Tích hợp hệ thống.",
+                    "Bảo hành, bảo trì.",
+                    "Thiết kế trang thông tin điện tử."
+                ],
+                correct: 2,
+                explain: "Theo Điều 52 Luật Công nghệ thông tin năm 2006, nhóm dịch vụ 'Bảo hành, bảo trì' bao gồm các hoạt động bảo hành, bảo trì, bảo đảm an toàn mạng và thông tin."
+            },
+            {
+                id: 13,
+                type: "MCQ",
+                text: "Trong bảo mật hệ thống thông tin, thuật ngữ 'An toàn thông tin' nhằm bảo vệ ba thuộc tính cơ bản nào sau đây của thông tin số và hệ thống mạng?",
+                options: [
+                    "Tính chính xác, tính bảo mật và tính khả thi.",
+                    "Tính cục bộ, tính toàn vẹn và tính ứng dụng trực tuyến.",
+                    "Tính bí mật (Confidentiality), tính toàn vẹn (Integrity) và tính sẵn sàng (Availability).",
+                    "Tính cập nhật phần mềm, tính chống mã độc và tính sao lưu dự phòng."
+                ],
+                correct: 2,
+                explain: "Mô hình bảo mật thông tin tiêu chuẩn (CIA triad) luôn dựa trên 3 thuộc tính cốt lõi: Tính bí mật (Confidentiality), Tính toàn vẹn (Integrity) và Tính sẵn sàng (Availability)."
+            },
+            {
+                id: 14,
+                type: "MCQ",
+                text: "Nhiệm vụ cốt lõi hàng ngày của một chuyên viên Kỹ sư quản trị mạng (Network Administrator) trong cơ quan, doanh nghiệp là gì?",
+                options: [
+                    "Tạo lập các thiết kế mỹ thuật đồ họa giao diện cho trang web.",
+                    "Cài đặt các phần mềm văn phòng cơ bản trên máy tính cá nhân của nhân viên.",
+                    "Cấu hình thiết bị mạng, quản lý luồng truyền dẫn dữ liệu, giám sát an ninh hệ thống và khắc phục sự cố kết nối mạng.",
+                    "Thực hiện thương thuyết mua sắm văn phòng phẩm và thiết bị văn phòng."
+                ],
+                correct: 2,
+                explain: "Nhiệm vụ then chốt của Kỹ sư quản trị mạng là duy trì, cấu hình, quản lý luồng dữ liệu và bảo đảm hoạt động thông suốt của toàn bộ hệ thống mạng cơ sở."
+            },
+            {
+                id: 15,
+                type: "MCQ",
+                text: "Đối với cơ cấu nhân lực công nghệ thông tin trong trường THPT, giáo viên chuyên trách CNTT thường KHÔNG trực tiếp thực hiện trọng trách nào sau đây?",
+                options: [
+                    "Giảng dạy môn Tin học theo chương trình giáo dục phổ thông, bảo đảm hoạt động và bảo trì phòng máy tính thực hành.",
+                    "Quản lý, vận hành các phần mềm quản lý trường học như sổ điểm điện tử, cổng thông tin điện tử của nhà trường.",
+                    "Trực tiếp sửa chữa mạng lưới điện hạ thế nội bộ và khắc phục sự cố thiết bị cơ khí nặng.",
+                    "Hỗ trợ kỹ thuật cho giáo viên trong trường vận hành hệ thống phần mềm quản lý học tập điện tử."
+                ],
+                correct: 2,
+                explain: "Sửa chữa hệ thống điện hạ thế và thiết bị cơ khí nặng là công việc của thợ điện và thợ kỹ thuật cơ điện, không nằm trong chuyên môn hay nhiệm vụ của giáo viên CNTT trường học."
+            },
+            {
+                id: 16,
+                type: "MCQ",
+                text: "Trong ngôn ngữ lập trình HTML, thẻ nào sau đây sử dụng thuộc tính 'href' để chỉ định địa chỉ đích của siêu liên kết?",
+                options: [
+                    "Thẻ hiển thị hình ảnh &lt;img&gt;",
+                    "Thẻ tạo siêu liên kết &lt;a&gt;",
+                    "Thẻ biểu diễn phần tử danh sách &lt;li&gt;",
+                    "Thẻ phân định đoạn văn bản &lt;p&gt;"
+                ],
+                correct: 1,
+                explain: "Thẻ &lt;a&gt; (Anchor) bắt buộc sử dụng thuộc tính href (hypertext reference) để xác định URL của liên kết trang web đích."
+            },
+            {
+                id: 17,
+                type: "MCQ",
+                text: "Toàn bộ cấu trúc giao diện đồ họa, hình ảnh, văn bản hiển thị trực quan cho người dùng web bắt buộc phải được đặt bên trong cặp thẻ cha nào?",
+                options: [
+                    "&lt;html&gt;...&lt;/html&gt;",
+                    "&lt;head&gt;...&lt;/head&gt;",
+                    "&lt;title&gt;...&lt;/title&gt;",
+                    "&lt;body&gt;...&lt;/body&gt;"
+                ],
+                correct: 3,
+                explain: "Cặp thẻ &lt;body&gt;...&lt;/body&gt; chứa tất cả các thành phần trực quan hiển thị trên cửa sổ trình duyệt như tiêu đề, văn bản, hình ảnh, bảng biểu, v.v."
+            },
+            {
+                id: 18,
+                type: "MCQ",
+                text: "Để tạo một cấu trúc danh sách có thứ tự được đánh số tự động (như 1, 2, 3...) trong lập trình HTML, thẻ mở đầu danh sách là thẻ nào?",
+                options: [
+                    "Thẻ &lt;ul&gt;",
+                    "Thẻ &lt;li&gt;",
+                    "Thẻ &lt;ol&gt;",
+                    "Thẻ &lt;dl&gt;"
+                ],
+                correct: 2,
+                explain: "Thẻ &lt;ol&gt; (Ordered List) được sử dụng để tạo danh sách có thứ tự. Thẻ &lt;ul&gt; tạo danh sách không thứ tự (dùng ký hiệu đầu dòng)."
+            },
+            {
+                id: 19,
+                type: "MCQ",
+                text: "Phương thức khai báo định kiểu CSS trực tiếp bên trong trang HTML thông qua khối mã lệnh nội bộ (Internal CSS) yêu cầu bao bọc bởi thẻ nào sau đây?",
+                options: [
+                    "Thẻ &lt;script&gt;",
+                    "Thẻ &lt;css&gt;",
+                    "Thẻ &lt;style&gt;",
+                    "Thẻ &lt;link&gt;"
+                ],
+                correct: 2,
+                explain: "Để viết mã CSS nội bộ, ta đặt các quy tắc định kiểu bên trong cặp thẻ &lt;style&gt;...&lt;/style&gt; thường nằm ở phần &lt;head&gt; của trang HTML."
+            },
+            {
+                id: 20,
+                type: "MCQ",
+                text: "Cú pháp liên kết nào sau đây giúp cuộn trực tiếp tới vùng thông tin đích có định danh id='lien-he' trên cùng một trang web?",
+                options: [
+                    "&lt;a href=\"lien-he\"&gt;Chuyển đến Liên hệ&lt;/a&gt;",
+                    "&lt;a link=\"#lien-he\"&gt;Chuyển đến Liên hệ&lt;/a&gt;",
+                    "&lt;a href=\"#lien-he\"&gt;Chuyển đến Liên hệ&lt;/a&gt;",
+                    "&lt;a target=\"#lien-he\"&gt;Chuyển đến Liên hệ&lt;/a&gt;"
+                ],
+                correct: 2,
+                explain: "Dấu thăng (#) trong giá trị thuộc tính href biểu thị liên kết nội bộ hướng tới phần tử có id tương ứng trên trang."
+            },
+            {
+                id: 21,
+                type: "MCQ",
+                text: "Cho đoạn mã HTML sau: &lt;ul&gt; &lt;li style=\"list-style-type: circle;\"&gt;12A&lt;/li&gt; &lt;li style=\"list-style-type: disc;\"&gt;12B&lt;/li&gt; &lt;/ul&gt;. Kết quả hiển thị của danh sách này trên trình duyệt là gì?",
+                options: [
+                    "Phần tử '12A' có ký hiệu đầu mục là hình tròn rỗng, '12B' có ký hiệu là dấu chấm tròn đen đặc.",
+                    "Phần tử '12A' có ký hiệu đầu mục là dấu chấm tròn đen đặc, '12B' có ký hiệu là hình tròn rỗng.",
+                    "Cả hai phần tử đều có ký hiệu đầu mục là hình tròn rỗng.",
+                    "Cả hai phần tử đều có ký hiệu đầu mục là dấu chấm tròn đen đặc."
+                ],
+                correct: 0,
+                explain: "Trong CSS, thuộc tính 'list-style-type' với giá trị 'circle' hiển thị ký hiệu hình tròn rỗng đại diện cho phần tử '12A', còn giá trị mặc định 'disc' hiển thị dấu chấm tròn đen đặc đại diện cho phần tử '12B'."
+            },
+            {
+                id: 22,
+                type: "MCQ",
+                text: "Xét đoạn mã HTML định kiểu hiển thị chữ 'Tin học 12' vừa in đậm vừa in nghiêng. Cấu trúc mã nào sau đây là KHÔNG đúng tiêu chuẩn ngữ nghĩa cấu trúc HTML?",
+                options: [
+                    "&lt;p&gt;&lt;strong&gt;&lt;em&gt;Tin học 12&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;",
+                    "&lt;p&gt;&lt;b&gt;&lt;i&gt;Tin học 12&lt;/i&gt;&lt;/b&gt;&lt;/p&gt;",
+                    "&lt;span style=\"font-weight: bold; font-style: italic;\"&gt;Tin học 12&lt;/span&gt;",
+                    "&lt;p&gt;&lt;div&gt;&lt;strong&gt;Tin học 12&lt;/strong&gt;&lt;/div&gt;&lt;/p&gt;"
+                ],
+                correct: 3,
+                explain: "Theo đặc tả HTML, thẻ &lt;p&gt; (paragraph) là phần tử khối văn bản không được chứa các phần tử khối cấu trúc khác như &lt;div&gt;. Việc lồng &lt;div&gt; trong &lt;p&gt; là sai cấu trúc ngữ nghĩa ngữ pháp HTML."
+            },
+            {
+                id: 23,
+                type: "MCQ",
+                text: "Quan sát đoạn mã tạo nhóm nút chọn lựa chọn giới tính sau đây:<br>&lt;input type=\"radio\" id=\"nam\" name=\"g1\" value=\"Nam\"&gt;&lt;label for=\"nam\"&gt;Nam&lt;/label&gt;<br>&lt;input type=\"radio\" id=\"nu\" name=\"g2\" value=\"Nu\"&gt;&lt;label for=\"nu\"&gt;Nữ&lt;/label&gt;<br>Đâu là nhận xét SAI về cơ chế vận hành của nhóm mã trên?",
+                options: [
+                    "Giao diện sẽ hiển thị hai nút chọn hình tròn nhỏ kèm theo hai nhãn chữ tương ứng.",
+                    "Tại một thời điểm làm việc, người dùng chỉ có thể nhấp chọn duy nhất một trong hai giới tính Nam hoặc Nữ.",
+                    "Khi người dùng nhấp chuột trực tiếp vào nhãn 'Nam' hoặc 'Nữ', nút tròn tương ứng sẽ tự động được chọn.",
+                    "Do hai nút chọn có thuộc tính name khác nhau ('g1' và 'g2') nên trình duyệt không tự động gom nhóm chúng lại để loại trừ nhau."
+                ],
+                correct: 1,
+                explain: "Vì hai thuộc tính name khác nhau ('g1' và 'g2'), trình duyệt xem chúng là hai nhóm độc lập, cho phép người dùng chọn cả hai cùng lúc. Do đó, nhận xét B bảo chỉ có thể chọn một trong hai là SAI."
+            },
+            {
+                id: 24,
+                type: "MCQ",
+                text: "Một khối hộp trong CSS được thiết lập: width: 150px; padding: 20px; border: 5px solid yellow; box-sizing: content-box;. Chiều rộng thực tế của hộp này khi kết xuất trên màn hình (không bao gồm khoảng lề margin) là bao nhiêu?",
+                options: [
+                    "150px.",
+                    "190px.",
+                    "200px.",
+                    "210px."
+                ],
+                correct: 2,
+                explain: "Với box-sizing: content-box, chiều rộng tổng thể = width + padding-left + padding-right + border-left + border-right = 150 + 20*2 + 5*2 = 200px."
+            },
+
+            // PHẦN II: 4 CÂU ĐÚNG SAI (Câu 1, 2, 5, 6 chuẩn gốc đề)
+            {
+                id: 25,
+                type: "TF",
+                originalLabel: "Câu 1",
+                text: "Hệ thống mạng thư viện trường học",
+                desc: "Thư viện trường học lắp đặt hệ thống mạng LAN cục bộ phục vụ ôn luyện gồm: 1 Router trung tâm (có 4 cổng LAN), 1 Switch chuyển mạch chính (có 48 cổng kết nối) và 3 thiết bị thu phát sóng không dây (Access Point).",
+                items: [
+                    { key: "a", text: "Các thiết bị Access Point bắt buộc phải được kết nối có dây trực tiếp về các cổng giao tiếp trên Switch hoặc Router mới có thể truyền dẫn tín hiệu internet.", correct: true },
+                    { key: "b", text: "Thiết bị Switch 48 cổng cho phép kết nối tối thiểu 48 thiết bị đầu cuối vào mạng cùng lúc.", correct: false },
+                    { key: "c", text: "Một máy tính xách tay kết nối Wi-Fi qua Access Point sẽ hoàn toàn không thể gửi lệnh in tài liệu trực tiếp tới máy in đang cắm dây cáp mạng vào Switch.", correct: false },
+                    { key: "d", text: "Nếu thiết bị Switch chính gặp sự cố hỏng nguồn, giáo viên phụ trách có thể cắm tạm dây truyền dẫn từ Access Point vào các cổng LAN trống trên Router để duy trì mạng không dây.", correct: true }
+                ],
+                explain: "a) Đúng vì AP hoạt động ở tầng vật lý/liên kết dữ liệu cần dây dẫn nối về LAN Switch/Router chính.\nb) Sai, Switch chỉ có tối đa 48 cổng vật lý kết nối trực tiếp thiết bị.\nc) Sai, cùng mạng LAN thì thiết bị có dây hay không dây đều kết nối được tới máy in mạng.\nd) Đúng, Router có 4 cổng LAN có thể gánh tạm kết nối trực tiếp cho các AP."
+            },
+            {
+                id: 26,
+                type: "TF",
+                originalLabel: "Câu 2",
+                text: "Hệ thống cơ sở dữ liệu quản lý điểm thi tốt nghiệp THPT",
+                desc: "Cơ sở dữ liệu quản lý điểm thi tốt nghiệp THPT bao gồm các bảng sau đây:\n- Bảng HOC_SINH(SBD, HoTen, NgaySinh, Lop)\n- Bảng DIEM_THI(SBD, DiemToan, DiemVan, DiemAnh)\n- Bảng PHACH(SBD, MaPhach)",
+                items: [
+                    { key: "a", text: "Trong bảng HOC_SINH, SBD làm khóa chính nên mỗi học sinh có thể tồn tại nhiều hơn một Số báo danh (SBD) tương ứng với số môn đăng ký thi tự chọn.", correct: false },
+                    { key: "b", text: "Mã phách (MaPhach) trong bảng PHACH đóng vai trò là khóa chính nên giá trị của nó bắt buộc phải là duy nhất giữa các thí sinh và không được phép trùng lặp.", correct: true },
+                    { key: "c", text: "Để kết xuất ra báo chứa thông tin: Số báo danh, Họ tên học sinh và Mã phách, ta cần thiết lập liên kết thông tin giữa bảng HOC_SINH và bảng PHACH thông qua thuộc tính chung là SBD.", correct: true },
+                    { key: "d", text: "Để đưa ra danh sách gồm Số báo danh (SBD), Họ và tên (HoTen) của các học sinh có điểm môn Toán lớn hơn hoặc bằng 9, câu lệnh SQL sau đây là đúng cú pháp: SELECT SBD, HoTen FROM HOC_SINH WHERE DiemToan >= 9.", correct: false }
+                ],
+                explain: "a) Sai, SBD đóng vai trò là khóa chính của bảng HOC_SINH nên giá trị của thuộc tính SBD phải là duy nhất, một học sinh chỉ tương ứng với một SBD trong bảng này.\nb) Đúng, mã phách bắt buộc phải duy nhất đối với mỗi thí sinh để đảm bảo tính chuẩn xác và bảo mật của điểm thi.\nc) Đúng, trường chung SBD chính là khóa ngoại liên kết các bảng HOC_SINH và PHACH một cách toàn vẹn dữ liệu.\nd) Sai, câu lệnh truy vấn dữ liệu từ hai bảng khác nhau (HOC_SINH, DIEM_THI) nhưng lại viết chung vào mệnh đề SELECT của bảng HOC_SINH và hoàn toàn thiếu điều kiện kết nối liên kết bảng (HOC_SINH.SBD = DIEM_THI.SBD) dẫn đến sai cú pháp logic điều kiện."
+            },
+            {
+                id: 27,
+                type: "TF",
+                originalLabel: "Câu 5",
+                text: "Cơ sở dữ liệu phòng khám đa khoa quản lý bệnh nhân",
+                desc: "Hệ thống cơ sở dữ liệu của một phòng khám đa khoa bao gồm các bảng dữ liệu liên kết như sau:\n- Bảng BENH_NHAN(Ma_BN, HoTen, NgaySinh, DiaChi)\n- Bảng LICH_KHAM(Ma_LK, Ma_BN, NgayKham, TrieuChung)\n- Bảng DON_THUOC(Ma_Don, Ma_LK, TenThuoc, LieuDung)",
+                items: [
+                    { key: "a", text: "Khóa chính của bảng LICH_KHAM bắt buộc phải là tổ hợp gồm cả hai thuộc tính (Ma_LK, Ma_BN) để tránh trùng lặp thông tin khám của cùng một bệnh nhân.", correct: false },
+                    { key: "b", text: "Bảng LICH_KHAM có thể thiết lập mối quan hệ liên kết trực tiếp với bảng DON_THUOC thông qua trường chung là Ma_LK, trong đó Ma_LK ở bảng DON_THUOC đóng vai trò là khóa ngoại.", correct: true },
+                    { key: "c", text: "Hành động cập nhật giá trị (UPDATE) cho thuộc tính DiaChi của bệnh nhân trong bảng BENH_NHAN sẽ làm ảnh hưởng xấu đến tính toàn vẹn liên kết và làm thay đổi khóa ngoại ở các bảng khác.", correct: false },
+                    { key: "d", text: "Để lọc tìm kiếm mã các bệnh nhân (Ma_BN) chưa từng đăng ký lịch khám lần nào tại phòng khám, câu lệnh SQL cần sử dụng truy vấn con kết hợp toán tử NOT IN: WHERE Ma_BN NOT IN (SELECT Ma_BN FROM LICH_KHAM).", correct: true }
+                ],
+                explain: "a) Sai, Ma_LK là khóa chính đủ độc lập để xác định duy nhất cho mỗi lượt khám mà không cần đến khóa tổ hợp.\nb) Đúng, trường Ma_LK liên kết hồ sơ khám với đơn thuốc, làm khóa ngoại ở bảng DON_THUOC để tham chiếu đến bảng LICH_KHAM.\nc) Sai, DiaChi là thuộc tính thông thường không tham gia làm khóa chính hay khóa ngoại nên cập nhật dữ liệu bình thường không ảnh hưởng đến mối quan hệ liên kết các bảng.\nd) Đúng, toán tử NOT IN kết hợp truy vấn con lọc ra những Ma_BN thuộc BENH_NHAN nhưng hoàn toàn không xuất hiện ở LICH_KHAM."
+            },
+            {
+                id: 28,
+                type: "TF",
+                originalLabel: "Câu 6",
+                text: "Cơ sở dữ liệu quản lý kết quả học tập",
+                desc: "Hệ thống cơ sở dữ liệu quản lý học sinh và điểm số của nhà trường gồm các bảng:\n- Bảng LOP(MaLop, TenLop)\n- Bảng HOC_SINH(MaHS, HoTen, MaLop)\n- Bảng DIEM(MaHS, MaMH, DiemCK)",
+                items: [
+                    { key: "a", text: "Mối quan hệ thực tế giữa thực thể bảng LOP và bảng HOC_SINH là mối quan hệ một - nhiều (1-N), vì một lớp học có thể có nhiều học sinh nhưng mỗi học sinh chỉ thuộc về duy nhất một lớp.", correct: true },
+                    { key: "b", text: "Trong thiết kế bảng DIEM, nếu lược bỏ thuộc tính MaMH ra khỏi khóa chính (chỉ giữ lại MaHS làm khóa chính) thì bảng vẫn đảm bảo tính toàn vẹn thông tin và không mất mát bản ghi điểm.", correct: false },
+                    { key: "c", text: "Sử dụng câu lệnh truy vấn có chứa mệnh đề gom nhóm và hàm gộp: SELECT MaHS, COUNT(*) FROM DIEM GROUP BY MaHS cho biết chính xác số lượng môn học đã có điểm cuối kỳ của từng học sinh.", correct: true },
+                    { key: "d", text: "Câu lệnh SQL sau đây thực hiện đưa ra thông tin gồm MaHS, HoTen và điểm cuối kì DiemCK của các học sinh có điểm cuối kì từ 8.0 trở lên của lớp có mã lớp là '12A1':<br><span class='font-mono font-bold bg-slate-100 px-1 py-0.5 rounded text-[11px] block mt-1 break-all'>SELECT HOC_SINH.MaHS, HoTen, DiemCK FROM HOC_SINH INNER JOIN DIEM ON HOC_SINH.MaHS = DIEM.MaHS WHERE DiemCK >= 8.0 AND MaLop = '12A1'</span>", correct: true }
+                ],
+                explain: "a) Đúng, đây là mối quan hệ 1-N kinh điển trong cấu trúc dữ liệu trường học.\nb) Sai, nếu khóa chính chỉ có MaHS, mỗi học sinh chỉ có thể lưu giữ điểm của duy nhất 1 môn học. Nhập điểm môn học thứ hai sẽ dẫn đến trùng khóa chính hoặc ghi đè mất dữ liệu môn cũ.\nc) Đúng, COUNT(*) kết hợp gom nhóm GROUP BY MaHS đếm tổng số dòng bản ghi điểm hiện có của học sinh đó.\nd) Đúng, câu lệnh SQL sử dụng phép nối INNER JOIN liên kết hai bảng HOC_SINH và DIEM thông qua trường MaHS để lấy HoTen và DiemCK, sau đó lọc theo đúng yêu cầu bằng mệnh đề WHERE."
+            }
+        ];
+
+        // KHỞI TẠO STATE CỦA ỨNG DỤNG LÀM BÀI
+        let questions = []; // Mảng chứa câu hỏi xáo trộn thực tế trong lượt làm bài này
+        let studentInfo = { name: "", class: "" };
+        let currentQuestionIndex = 0;
+        let studentAnswers = {}; // Lưu trữ: { qId: answerValue }
+        let isSubmitted = false;
+        let timerInterval = null;
+        let timeLeft = 3000; // 50 phút = 3000 giây
+        let examStartTime = null;
+
+        // THUẬT TOÁN XÁO TRỘN MẢNG ĐỘC LẬP (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // CHUẨN BỊ ĐỀ THI: ĐA PHÂN CẤP XÁO TRỘN ĐA CHIỀU (HOẶC GIỮ NGUYÊN LẦN ĐẦU)
+        function prepareExam(shouldShuffle) {
+            // Sao chép sâu (Deep Copy) ngân hàng câu hỏi gốc để không gây đột biến dữ liệu gốc
+            const workingCopy = JSON.parse(JSON.stringify(ORIGINAL_QUESTIONS));
+            
+            // 1. Phân tách danh sách theo Tầng cấu trúc
+            const mcqs = workingCopy.filter(q => q.type === "MCQ");
+            const tfs = workingCopy.filter(q => q.type === "TF");
+
+            if (shouldShuffle) {
+                // Lần 2 trở đi: Thực hiện xáo trộn ngẫu nhiên hoàn toàn theo yêu cầu
+                
+                // 2. Xáo trộn các câu hỏi trắc nghiệm một lựa chọn (Phần I)
+                shuffleArray(mcqs);
+
+                // 3. Xáo trộn thứ tự các đáp án (A, B, C, D) bên trong từng câu MCQ
+                mcqs.forEach(mcq => {
+                    mcq.options = mcq.options.map(opt => opt.replace(/^[A-D]\.\s*/, ""));
+                    const correctText = mcq.options[mcq.correct];
+                    shuffleArray(mcq.options);
+                    // Xác định lại đúng vị trí index đáp án đúng sau khi đã đảo lộn
+                    mcq.correct = mcq.options.indexOf(correctText);
+                });
+
+                // 4. Xáo trộn vị trí các câu hỏi Đúng / Sai (Phần II)
+                shuffleArray(tfs);
+
+                // 5. Xáo trộn vị trí nhận định con (a, b, c, d) bên trong từng câu Đúng / Sai
+                tfs.forEach(tf => {
+                    shuffleArray(tf.items);
+                    // Chuẩn hóa lại nhãn khóa hiển thị tuần tự là a, b, c, d
+                    tf.items.forEach((item, index) => {
+                        item.key = ['a', 'b', 'c', 'd'][index];
+                    });
+                });
+            } else {
+                // Lần đầu tiên làm bài: Giữ nguyên vẹn thứ tự câu hỏi và đáp án của đề gốc trong tệp
+                mcqs.forEach(mcq => {
+                    mcq.options = mcq.options.map(opt => opt.replace(/^[A-D]\.\s*/, ""));
+                });
+                tfs.forEach(tf => {
+                    tf.items.forEach((item, index) => {
+                        item.key = ['a', 'b', 'c', 'd'][index];
+                    });
+                });
+            }
+
+            // 6. Hợp nhất mảng hoạt động chung phục vụ hiển thị
+            questions = [...mcqs, ...tfs];
+        }
+
+        // ĐIỀU KHÌỂN ĐÓNG/MỞ NGĂN KÉO TRÊN DI ĐỘNG (MOBILE DRAWER)
+        function toggleMobileDrawer(open) {
+            const sidebar = document.getElementById('navigation-sidebar');
+            const backdrop = document.getElementById('drawer-backdrop');
+            if (open) {
+                sidebar.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        // KIỂM TRA ĐIỀU KIỆN ĐỂ MỞ KHÓA NÚT BẮT ĐẦU LÀM BÀI
+        function checkFormValidity() {
+            const name = document.getElementById('student-name').value.trim();
+            const className = document.getElementById('student-class').value.trim();
+            const btn = document.getElementById('btn-start');
+            
+            if (name !== "" && className !== "") {
+                btn.disabled = false;
+                btn.className = "w-full py-3.5 px-6 rounded-xl font-title font-bold text-sm md:text-base text-examBlue-900 bg-examYellow-500 hover:bg-examYellow-600 active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer";
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full py-3.5 px-6 rounded-xl font-title font-bold text-sm md:text-base text-white bg-slate-300 cursor-not-allowed transition-all duration-300 shadow-md";
+            }
+        }
+
+        // BẮT ĐẦU VÀO PHÒNG THI, CHẠY TIMED COUNTDOWN
+        function startExam() {
+            studentInfo.name = document.getElementById('student-name').value.trim();
+            studentInfo.class = document.getElementById('student-class').value.trim();
+            
+            // Cập nhật thông tin hiển thị lên Header của Phiếu
+            document.getElementById('display-name').innerText = studentInfo.name;
+            document.getElementById('display-class').innerText = studentInfo.class;
+
+            // Chuyển màn hình
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('exam-section').classList.remove('hidden');
+
+            examStartTime = new Date();
+            
+            // Lần làm bài đầu tiên: Thể hiện đúng và nguyên vẹn thứ tự nội dung
+            prepareExam(false);
+            initializeSidebarGrid();
+            renderQuestion();
+            startTimer();
+        }
+
+        // LÀM LẠI BÀI THI - XÁO TRỘN ĐỀ MỚI MÀ KHÔNG CẦN TẢI LẠI TRANG (LẦN 2 TRỞ ĐI)
+        function restartExam() {
+            // Khôi phục trạng thái làm bài mặc định
+            studentAnswers = {};
+            isSubmitted = false;
+            timeLeft = 3000;
+            currentQuestionIndex = 0;
+
+            // Chuyển đổi trạng thái hiển thị
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('exam-section').classList.remove('hidden');
+
+            // Thiết lập lại cấu trúc nút nộp trên Header chính
+            const headerBtn = document.querySelector('#exam-section button[onclick="confirmSubmit()"]');
+            if (headerBtn) {
+                headerBtn.innerText = "NỘP BÀI";
+                headerBtn.className = "bg-red-500 hover:bg-red-600 active:scale-95 text-white font-bold px-4 py-2 rounded-xl text-sm tracking-wide shadow-md transition-all duration-200";
+                headerBtn.onclick = confirmSubmit;
+            }
+
+            // Tiến hành xáo trộn ma trận đề thi mới một cách độc lập từ lần 2 trở đi
+            prepareExam(true);
+            initializeSidebarGrid();
+            renderQuestion();
+
+            // Khởi động lại đồng hồ thời gian
+            clearInterval(timerInterval);
+            startTimer();
+        }
+
+        // ĐỒNG HỒ ĐẾM NGƯỢC THỜI GIAN LÀM BÀI
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                    return;
+                }
+                timeLeft--;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').innerText = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // KHỞI TẠO BẢNG CHỈ SỐ HOÀN THÀNH BÊN SƯỜN PHẢI
+        function initializeSidebarGrid() {
+            const gridMcq = document.getElementById('grid-mcq');
+            const gridTf = document.getElementById('grid-tf');
+            gridMcq.innerHTML = "";
+            gridTf.innerHTML = "";
+
+            questions.forEach((q, idx) => {
+                if (q.type === "MCQ") {
+                    // Tạo nút tròn đại diện cho câu MCQ
+                    const btn = document.createElement('button');
+                    btn.id = `indicator-q-${q.id}`;
+                    btn.type = "button";
+                    btn.className = "w-full h-9 text-[11px] font-bold rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-examBlue-600 transition flex items-center justify-center";
+                    btn.innerText = idx + 1;
+                    btn.onclick = () => {
+                        jumpToQuestion(idx);
+                        toggleMobileDrawer(false); // Đóng drawer trên di động sau khi chọn
+                    };
+                    gridMcq.appendChild(btn);
+                } else {
+                    // Tạo nút cho câu Đúng / Sai (Part II)
+                    const btn = document.createElement('button');
+                    btn.id = `indicator-q-${q.id}`;
+                    btn.type = "button";
+                    
+                    btn.className = "w-full h-9 text-[11px] font-bold rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-examBlue-600 transition flex items-center justify-center";
+                    btn.innerText = idx + 1;
+                    btn.onclick = () => {
+                        jumpToQuestion(idx);
+                        toggleMobileDrawer(false);
+                    };
+                    gridTf.appendChild(btn);
+                }
+            });
+            updateSidebarStatus();
+        }
+
+        // CẬP NHẬT TRẠNG THÁI HIỂY THỊ CỦA BẢNG ĐIỀU HƯỚNG CÂU HỎI
+        function updateSidebarStatus() {
+            let answeredMcq = 0;
+            let answeredTf = 0;
+
+            questions.forEach((q, idx) => {
+                const indicator = document.getElementById(`indicator-q-${q.id}`);
+                if (!indicator) return;
+
+                const ans = studentAnswers[q.id];
+                let isAnswered = false;
+
+                if (q.type === "MCQ") {
+                    if (ans !== undefined && ans !== null) {
+                        isAnswered = true;
+                        answeredMcq++;
+                    }
+                } else {
+                    // Đối với True/False, chỉ tính là hoàn thành nếu học sinh đã trả lời đầy đủ 4 ý a, b, c, d
+                    if (ans && Object.keys(ans).length === 4) {
+                        isAnswered = true;
+                        answeredTf++;
+                    }
+                }
+
+                // Thiết lập Style tương ứng
+                if (idx === currentQuestionIndex) {
+                    // Đang xem hiện tại
+                    indicator.className = `w-full h-9 text-[11px] font-bold rounded-lg border-2 border-examYellow-500 bg-examBlue-100 text-examBlue-900 transition flex items-center justify-center shadow-sm`;
+                } else if (isAnswered) {
+                    // Đã làm
+                    indicator.className = `w-full h-9 text-[11px] font-bold rounded-lg border border-examBlue-600 bg-examBlue-600 text-white transition flex items-center justify-center`;
+                } else {
+                    // Chưa làm
+                    indicator.className = `w-full h-9 text-[11px] font-bold rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-examBlue-600 transition flex items-center justify-center`;
+                }
+            });
+
+            // Cập nhật số lượng đếm
+            document.getElementById('mcq-count').innerText = `${answeredMcq}/24`;
+            document.getElementById('tf-count').innerText = `${answeredTf}/4`;
+
+            // Tính tiến trình tổng quan % trên progress bar
+            const totalAnswered = answeredMcq + answeredTf;
+            const percentage = (totalAnswered / 28) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        // KIỂM TRA XEM CÂU HỎI Ở CHỈ SỐ INDEX NÀY ĐÃ ĐƯỢC TRẢ LỜI CHƯA
+        function isQuestionAnswered(qIndex) {
+            const q = questions[qIndex];
+            const ans = studentAnswers[q.id];
+            if (q.type === "MCQ") {
+                return (ans !== undefined && ans !== null);
+            } else if (q.type === "TF") {
+                if (!ans) return false;
+                return (Object.keys(ans).length === 4);
+            }
+            return false;
+        }
+
+        // KIỂM TRA TÍNH HỢP LỆ KHI TIẾN TỚI CÂU HỎI ĐÍCH (HỌC SINH KHÔNG ĐƯỢC BỎ QUA CÂU CHƯA TRẢ LỜI)
+        function canAccessQuestion(targetIdx) {
+            // Luôn cho phép lùi về xem các câu trước
+            if (targetIdx <= currentQuestionIndex) return true;
+            
+            // Nếu muốn tiến lên phía trước, tất cả các câu từ vị trí hiện tại đến đích-1 phải được hoàn tất
+            for (let i = currentQuestionIndex; i < targetIdx; i++) {
+                if (!isQuestionAnswered(i)) return false;
+            }
+            return true;
+        }
+
+        // KẾT XUẤT NỘI DUNG CÂU HỎI HIỆN TẠI LÊN VÙNG LÀM BÀI
+        function renderQuestion() {
+            const container = document.getElementById('question-container');
+            const q = questions[currentQuestionIndex];
+            
+            // Ẩn cảnh báo khi hiển thị câu hỏi mới
+            const warningBanner = document.getElementById('navigation-warning');
+            if (warningBanner) warningBanner.classList.add('hidden');
+            
+            // Cập nhật nhãn chỉ số câu hỏi chân trang
+            document.getElementById('question-indicator').innerText = `Câu ${currentQuestionIndex + 1} / 28`;
+
+            // Vô hiệu hóa/Kích hoạt các nút điều hướng tương ứng
+            document.getElementById('btn-prev').disabled = currentQuestionIndex === 0;
+            const btnNext = document.getElementById('btn-next');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerHTML = `NỘP BÀI <i class="fa-solid fa-check-double ml-1"></i>`;
+                btnNext.className = "flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs md:text-sm transition active:scale-95";
+                btnNext.onclick = confirmSubmit;
+            } else {
+                btnNext.innerHTML = `TIẾP THEO <i class="fa-solid fa-chevron-right"></i>`;
+                btnNext.className = "flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl bg-examBlue-600 hover:bg-examBlue-700 text-white font-bold text-xs md:text-sm transition active:scale-95";
+                btnNext.onclick = () => navigateQuestion(1);
+            }
+
+            // RENDER THEO KIỂU CÂU HỎI
+            if (q.type === "MCQ") {
+                const currentAns = studentAnswers[q.id];
+                const isAnswered = currentAns !== undefined && currentAns !== null;
+                
+                let optionsHtml = q.options.map((opt, oIdx) => {
+                    const isSelected = currentAns === oIdx;
+                    let bgClass = "bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700";
+                    let checkedAttr = "";
+                    let iconHtml = "";
+                    
+                    if (isSelected) {
+                        checkedAttr = "checked";
+                    }
+
+                    // Tương tác phản hồi tức thì (Nếu đã trả lời thì hiển thị Đúng / Sai ngay lập tức)
+                    if (isAnswered) {
+                        const isCorrect = q.correct === oIdx;
+                        if (isCorrect) {
+                            bgClass = "bg-green-50 border-green-600 text-green-900 font-semibold ring-2 ring-green-600/10";
+                            iconHtml = `<span class="w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center text-xs ml-auto shrink-0 animate-bounce"><i class="fa-solid fa-check"></i></span>`;
+                        } else if (isSelected) {
+                            bgClass = "bg-red-50 border-red-500 text-red-900 ring-2 ring-red-500/10";
+                            iconHtml = `<span class="w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs ml-auto shrink-0"><i class="fa-solid fa-xmark"></i></span>`;
+                        } else {
+                            // Làm tối nhẹ các câu không được chọn để tập trung vào kết quả đúng/sai
+                            bgClass = "bg-slate-50/50 border-slate-200/50 text-slate-400 pointer-events-none";
+                        }
+                    }
+
+                    const optionLetter = ['A', 'B', 'C', 'D'][oIdx];
+
+                    return `
+                        <label onclick="${isAnswered ? '' : `saveMcqAnswer(${q.id}, ${oIdx})`}" 
+                            class="option-label flex items-center gap-3 p-3.5 md:p-4 rounded-xl border cursor-pointer ${bgClass} text-xs md:text-sm transition duration-200 active:scale-[0.99]">
+                            <input type="radio" name="mcq-${q.id}" value="${oIdx}" ${checkedAttr} ${isAnswered ? 'disabled' : ''} class="accent-examBlue-600 w-4 h-4 shrink-0 pointer-events-none">
+                            <span class="leading-relaxed pr-2"><strong>${optionLetter}.</strong> ${opt}</span>
+                            ${iconHtml}
+                        </label>
+                    `;
+                }).join("");
+
+                container.innerHTML = `
+                    <div class="space-y-4 animate-fade-in">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-examBlue-100 text-examBlue-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Phần I: Câu trắc nghiệm</span>
+                            <span class="text-xs text-slate-400 font-bold">Câu số ${currentQuestionIndex + 1}</span>
+                        </div>
+                        <h3 class="font-title font-bold text-slate-800 text-sm md:text-base leading-snug mb-4">${q.text}</h3>
+                        <div class="space-y-2.5">
+                            ${optionsHtml}
+                        </div>
+                        
+                        <!-- LỜI GIẢI THÍCH TRƯỢT XUỐNG NGAY LÀM XONG -->
+                        ${isAnswered ? `
+                            <div class="mt-4 p-4 bg-green-50/50 rounded-xl border border-green-100 text-slate-600 text-xs md:text-sm animate-fade-in shadow-inner">
+                                <div class="flex items-center gap-2 font-bold text-green-800 mb-1.5">
+                                    <i class="fa-solid fa-circle-nodes text-green-600"></i>
+                                    <span>HỌC KIẾN THỨC CÂU ${currentQuestionIndex + 1}:</span>
+                                </div>
+                                <p class="leading-relaxed">${q.explain}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else if (q.type === "TF") {
+                const currentAns = studentAnswers[q.id] || {};
+                const answeredKeys = Object.keys(currentAns);
+                
+                let rowsHtml = q.items.map((item) => {
+                    const stAns = currentAns[item.key]; // true, false hoặc undefined
+                    const isSubAnswered = stAns !== undefined && stAns !== null;
+                    
+                    let yesBtnClass = "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200";
+                    let noBtnClass = "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200";
+                    let statusIconHtml = "";
+
+                    if (stAns === true) {
+                        yesBtnClass = "bg-examBlue-600 text-white border-examBlue-600 font-bold";
+                    } else if (stAns === false) {
+                        noBtnClass = "bg-examYellow-500 text-examBlue-900 border-examYellow-500 font-bold";
+                    }
+
+                    // TƯƠNG TÁC PHẢN HỒI TỨC THÌ KHI CHỌN ĐÚNG/SAI CHO TỪNG Ý
+                    if (isSubAnswered) {
+                        const correctVal = item.correct;
+                        const isUserCorrect = stAns === correctVal;
+
+                        // Khóa các nút chọn
+                        yesBtnClass += " opacity-50 pointer-events-none";
+                        noBtnClass += " opacity-50 pointer-events-none";
+
+                        // Làm nổi bật nút đã chọn theo màu Đúng/Sai thực tế
+                        if (stAns === true) {
+                            yesBtnClass = correctVal === true 
+                                ? "bg-green-600 text-white border-green-600 font-bold" 
+                                : "bg-red-500 text-white border-red-500 font-bold";
+                        } else if (stAns === false) {
+                            noBtnClass = correctVal === false 
+                                ? "bg-green-600 text-white border-green-600 font-bold" 
+                                : "bg-red-500 text-white border-red-500 font-bold";
+                        }
+
+                        if (isUserCorrect) {
+                            statusIconHtml = `<span class="text-green-600 font-bold text-[10px] md:text-xs flex items-center justify-center gap-1 mt-1"><i class="fa-solid fa-circle-check"></i> ĐÚNG</span>`;
+                        } else {
+                            statusIconHtml = `<span class="text-red-500 font-bold text-[10px] md:text-xs flex items-center justify-center gap-1 mt-1"><i class="fa-solid fa-circle-xmark"></i> SAI (Đáp án: ${correctVal ? 'ĐÚNG' : 'SAI'})</span>`;
+                        }
+                    }
+
+                    return `
+                        <tr class="border-b border-slate-100 hover:bg-slate-50 transition duration-150">
+                            <td class="py-3 px-2 font-bold text-examBlue-700 text-center w-8 text-xs md:text-sm">${item.key})</td>
+                            <td class="py-3 px-3 text-xs md:text-sm text-slate-700 leading-relaxed">${item.text}</td>
+                            <td class="py-3 px-2 text-center w-36 shrink-0">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button type="button" ${isSubAnswered ? 'disabled' : ''} onclick="saveTfAnswer(${q.id}, '${item.key}', true)"
+                                        class="px-2.5 py-1.5 rounded-lg border text-[10px] md:text-xs tracking-wide transition active:scale-95 ${yesBtnClass}">
+                                        ĐÚNG
+                                    </button>
+                                    <button type="button" ${isSubAnswered ? 'disabled' : ''} onclick="saveTfAnswer(${q.id}, '${item.key}', false)"
+                                        class="px-2.5 py-1.5 rounded-lg border text-[10px] md:text-xs tracking-wide transition active:scale-95 ${noBtnClass}">
+                                        SAI
+                                    </button>
+                                </div>
+                                ${statusIconHtml}
+                            </td>
+                        </tr>
+                    `;
+                }).join("");
+
+                // Tìm số thứ tự hiển thị của phần II
+                let titleLabel = q.text;
+
+                container.innerHTML = `
+                    <div class="space-y-4 animate-fade-in">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-examYellow-500 text-examBlue-900 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Phần II: Câu hỏi Đúng / Sai</span>
+                            <span class="text-xs text-slate-400 font-bold">Câu số ${currentQuestionIndex + 1} (Gốc: ${q.originalLabel})</span>
+                        </div>
+                        <h3 class="font-title font-bold text-slate-800 text-sm md:text-base leading-snug">${q.text}</h3>
+                        
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-[11px] md:text-xs text-slate-600 whitespace-pre-line leading-relaxed mb-3 font-mono">
+                            ${q.desc}
+                        </div>
+
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                            <table class="w-full text-left border-collapse min-w-[500px] md:min-w-0">
+                                <thead>
+                                    <tr class="bg-slate-100 border-b border-slate-200">
+                                        <th class="py-2.5 px-2 text-[10px] font-bold text-slate-500 text-center uppercase tracking-wider w-8">Ý</th>
+                                        <th class="py-2.5 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nội dung nhận định</th>
+                                        <th class="py-2.5 px-2 text-[10px] font-bold text-slate-500 text-center uppercase tracking-wider w-36">Lựa chọn của em</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rowsHtml}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- KHI HOÀN THÀNH TOÀN BỘ 4 Ý SẼ HIỂN THỊ LỜI GIẢI THÍCH CHI TIẾT -->
+                        ${answeredKeys.length === 4 ? `
+                            <div class="mt-4 p-4 bg-green-50/50 rounded-xl border border-green-100 text-slate-600 text-xs md:text-sm animate-fade-in shadow-inner">
+                                <div class="flex items-center gap-2 font-bold text-green-800 mb-1.5">
+                                    <i class="fa-solid fa-circle-nodes text-green-600"></i>
+                                    <span>HỌC KIẾN THỨC CÂU ${currentQuestionIndex + 1}:</span>
+                                </div>
+                                <p class="leading-relaxed whitespace-pre-line">${q.explain}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            updateSidebarStatus();
+            
+            // Tự động cuộn phần hỏi lên trên đầu sau khi hiển thị câu hỏi mới
+            container.scrollTop = 0;
+        }
+
+        // LƯU KẾT QUẢ VÀ PHÁT ÂM THANH PHẢN HỒI ĐÚNG/SAI NGAY LẬP TỨC (PHẦN I - MCQ)
+        function saveMcqAnswer(qId, oIdx) {
+            studentAnswers[qId] = oIdx;
+            
+            // Tự động ẩn banner cảnh báo khi học sinh đã chọn câu trả lời
+            const warningBanner = document.getElementById('navigation-warning');
+            if (warningBanner) warningBanner.classList.add('hidden');
+            
+            // Tìm thông tin câu hỏi hiện tại
+            const q = questions.find(item => item.id === qId);
+            if (q) {
+                if (oIdx === q.correct) {
+                    playCorrectSound();
+                } else {
+                    playIncorrectSound();
+                }
+            }
+            
+            updateSidebarStatus();
+            renderQuestion();
+        }
+
+        // LƯU KẾT QUẢ VÀ PHÁT ÂM THANH PHẢN HỒI CHO TỪNG Ý (PHẦN II - TRUE/FALSE)
+        function saveTfAnswer(qId, itemKey, isTrue) {
+            if (!studentAnswers[qId]) {
+                studentAnswers[qId] = {};
+            }
+            studentAnswers[qId][itemKey] = isTrue;
+            
+            // Tự động ẩn banner cảnh báo nếu học sinh hoàn thành toàn bộ 4 ý của câu Đúng/Sai
+            if (Object.keys(studentAnswers[qId]).length === 4) {
+                const warningBanner = document.getElementById('navigation-warning');
+                if (warningBanner) warningBanner.classList.add('hidden');
+            }
+            
+            // Đánh giá trực tiếp xem ý lựa chọn này đúng hay sai để phát âm thanh tương ứng
+            const q = questions.find(item => item.id === qId);
+            if (q) {
+                const subItem = q.items.find(sub => sub.key === itemKey);
+                if (subItem) {
+                    if (isTrue === subItem.correct) {
+                        playCorrectSound();
+                    } else {
+                        playIncorrectSound();
+                    }
+                }
+            }
+            
+            updateSidebarStatus();
+            renderQuestion();
+        }
+
+        // ĐIỀU HƯỚNG CÂU HỎI TIẾP THEO HOẶC QUAY LẠI (Kiểm soát nghiêm ngặt điều kiện phải trả lời xong)
+        function navigateQuestion(step) {
+            const warningBanner = document.getElementById('navigation-warning');
+            if (warningBanner) warningBanner.classList.add('hidden');
+
+            const nextIdx = currentQuestionIndex + step;
+            if (nextIdx >= 0 && nextIdx < questions.length) {
+                if (step > 0 && !canAccessQuestion(nextIdx)) {
+                    if (warningBanner) warningBanner.classList.remove('hidden');
+                    playIncorrectSound();
+                    return; // Chặn không cho đi tiếp
+                }
+                currentQuestionIndex = nextIdx;
+                renderQuestion();
+            }
+        }
+
+        // NHẢY ĐẾN CÂU HỎI BẤT KỲ QUA SIDEBAR GRID (Có ràng buộc bắt buộc hoàn tất)
+        function jumpToQuestion(idx) {
+            const warningBanner = document.getElementById('navigation-warning');
+            if (warningBanner) warningBanner.classList.add('hidden');
+
+            if (!canAccessQuestion(idx)) {
+                if (warningBanner) warningBanner.classList.remove('hidden');
+                playIncorrectSound();
+                return; // Chặn nhảy câu
+            }
+
+            currentQuestionIndex = idx;
+            renderQuestion();
+        }
+
+        // XÁC NHẬN NỘP BÀI THI QUA MODAL
+        function confirmSubmit() {
+            if (isSubmitted) return;
+            
+            // Đảm bảo học sinh đã trả lời xong câu hỏi hiện hành trước khi nộp
+            if (!isCurrentQuestionAnswered()) {
+                const warningBanner = document.getElementById('navigation-warning');
+                if (warningBanner) {
+                    warningBanner.classList.remove('hidden');
+                }
+                playIncorrectSound();
+                return;
+            }
+            
+            // Đếm số lượng câu chưa hoàn thiện
+            let unanswered = 0;
+            questions.forEach(q => {
+                const ans = studentAnswers[q.id];
+                if (q.type === "MCQ") {
+                    if (ans === undefined || ans === null) unanswered++;
+                } else {
+                    if (!ans || Object.keys(ans).length < 4) unanswered++;
+                }
+            });
+
+            let msg = "Em chắc chắn muốn kết thúc bài làm tại đây để hệ thống lưu điểm số?";
+            if (unanswered > 0) {
+                msg = `Em vẫn còn <span class="text-red-500 font-bold">${unanswered} câu hỏi chưa hoàn tất</span>. Nhấn 'ĐỒNG Ý NỘP BÀI' để kết thúc bài thi ngay lập tức.`;
+            }
+
+            document.getElementById('confirm-modal-msg').innerHTML = msg;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        // KHOÁ CHUYỂN CÂU NẾU CHƯA HOÀN THÀNH CÂU HIỆN TẠI
+        function isCurrentQuestionAnswered() {
+            const q = questions[currentQuestionIndex];
+            const ans = studentAnswers[q.id];
+            if (q.type === "MCQ") {
+                return (ans !== undefined && ans !== null);
+            } else if (q.type === "TF") {
+                if (!ans) return false;
+                return (Object.keys(ans).length === 4);
+            }
+            return false;
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        // HẾT GIỜ TỰ ĐỘNG NỘP
+        function autoSubmit() {
+            closeConfirmModal();
+            forceSubmit();
+        }
+
+        // TIẾN HÀNH CHẤM ĐIỂM THEO CHUẨN CỦA BỘ GIÁO DỤC 2026 (Tính toán chuẩn xác tỷ lệ điểm)
+        function forceSubmit() {
+            clearInterval(timerInterval);
+            isSubmitted = true;
+            closeConfirmModal();
+
+            let part2Score = 0.0;
+            let correctPart1Count = 0;
+            let correctPart2Count = 0; // Số câu đúng tuyệt đối 4/4 ý
+
+            questions.forEach(q => {
+                const ans = studentAnswers[q.id];
+
+                if (q.type === "MCQ") {
+                    if (ans === q.correct) {
+                        correctPart1Count++;
+                    }
+                } else if (q.type === "TF") {
+                    if (ans) {
+                        let correctSubCount = 0;
+                        q.items.forEach(item => {
+                            if (ans[item.key] === item.correct) {
+                                correctSubCount++;
+                            }
+                        });
+
+                        // Quy tắc chấm điểm lũy tiến Phần II cực kỳ chính xác:
+                        // - Đúng 1 ý: 0.1 điểm
+                        // - Đúng 2 ý: 0.25 điểm
+                        // - Đúng 3 ý: 0.5 điểm
+                        // - Đúng 4 ý: 1.0 điểm
+                        if (correctSubCount === 1) {
+                            part2Score += 0.1;
+                        } else if (correctSubCount === 2) {
+                            part2Score += 0.25;
+                        } else if (correctSubCount === 3) {
+                            part2Score += 0.5;
+                        } else if (correctSubCount === 4) {
+                            part2Score += 1.0;
+                            correctPart2Count++; // Tuyệt đối cả 4 ý
+                        }
+                    }
+                }
+            });
+
+            // Chuyển đổi định dạng điểm tổng hợp
+            const part1Score = correctPart1Count * 0.25;
+            const score = part1Score + part2Score;
+            const finalScoreFormatted = score.toFixed(2);
+            
+            // Tính toán thời gian làm bài
+            const totalDuration = Math.round((new Date() - examStartTime) / 1000);
+            const m = Math.floor(totalDuration / 60);
+            const s = totalDuration % 60;
+            const durationStr = `${m} phút ${s} giây`;
+
+            // Điền thông tin vào trang kết quả
+            document.getElementById('res-name').innerText = studentInfo.name;
+            document.getElementById('res-class').innerText = `Lớp: ${studentInfo.class}`;
+            document.getElementById('res-score').innerText = `${finalScoreFormatted} / 10`;
+            
+            // Phần trạng thái đúng ước tính
+            const percent = Math.round((score / 10) * 100);
+            document.getElementById('res-percent').innerText = `Đạt khoảng ${percent}% năng lực kiểm tra`;
+            document.getElementById('res-time').innerText = durationStr;
+
+            document.getElementById('stat-part1').innerText = `${correctPart1Count} / 24 câu đúng (${part1Score.toFixed(2)} điểm)`;
+            document.getElementById('stat-part2').innerText = `${part2Score.toFixed(2)} / 4.0 điểm`;
+
+            // Hiện màn hình báo cáo kết quả thi thử
+            document.getElementById('exam-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+        }
+
+        // BẬT CHẾ ĐỘ XEM LẠI ĐÁP ÁN ĐỂ HỌC TẬP
+        function reviewExam() {
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('exam-section').classList.remove('hidden');
+            
+            // Trả về câu hỏi đầu tiên để rà soát
+            currentQuestionIndex = 0;
+            renderQuestion();
+
+            // Sửa đổi trạng thái nút nộp trên header
+            const headerBtn = document.querySelector('#exam-section button[onclick="confirmSubmit()"]');
+            if (headerBtn) {
+                headerBtn.innerText = "KẾT QUẢ CHUNG";
+                headerBtn.className = "bg-examYellow-500 hover:bg-examYellow-600 text-examBlue-900 font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm shadow-md transition-all";
+                headerBtn.onclick = () => {
+                    document.getElementById('exam-section').classList.add('hidden');
+                    document.getElementById('result-section').classList.remove('hidden');
+                };
+            }
+        }
+    </script>
+</body>
+</html>
